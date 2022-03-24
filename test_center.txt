@@ -1,0 +1,15 @@
+part-of-AFLW/already_labeled/image00014.jpg 1064 1085 1555 1061 1322 2001 1388 2295 1466 2738
+part-of-AFLW/already_labeled/image00019.jpg 293 69 328 70 310 131 310 155 316 188
+part-of-AFLW/already_labeled/image00021.jpg 1184 967 1496 978 1310 1481 1400 1642 1412 1858
+part-of-AFLW/already_labeled/image00023.jpg 1906 574 2132 490 2146 992 2323 1033 2423 1213
+part-of-AFLW/already_labeled/image00026.jpg 1221 907 1508 907 1352 1368 1461 1504 1531 1787
+part-of-AFLW/already_labeled/image00028.jpg 831 1410 1525 1470 1112 2787 1232 2991 1303 3481
+part-of-AFLW/already_labeled/image00039.jpg 546 539 740 550 633 874 617 982 633 1226
+part-of-AFLW/already_labeled/image00040.jpg 549 542 746 547 647 862 659 943 659 1114
+part-of-AFLW/already_labeled/image00041.jpg 522 523 702 541 602 859 596 958 605 1111
+part-of-AFLW/already_labeled/image00042.jpg 573 490 780 463 734 817 704 916 686 1049
+part-of-AFLW/already_labeled/image00043.jpg 552 538 755 523 689 841 669 966 665 1146
+part-of-AFLW/already_labeled/image00044.jpg 552 512 737 509 653 856 669 937 680 1042
+part-of-AFLW/already_labeled/image00045.jpg 644 512 839 539 689 835 656 937 617 1075
+part-of-AFLW/already_labeled/image00046.jpg 606 536 783 547 680 842 647 923 644 1052
+part-of-AFLW/already_labeled/image00047.jpg 611 463 791 517 656 860 632 932 584 1123
