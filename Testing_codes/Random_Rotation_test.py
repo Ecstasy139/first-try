@@ -8,7 +8,7 @@ import imgaug as ia
 import imgaug.augmenters as iaa
 
 
-img_path = r'part-of-AFLW/already_labeled\image00014.jpg'
+img_path = r'../part-of-AFLW/already_labeled/image00014.jpg'
 landmarks = [1064, 1085, 1555, 1061, 1322, 2001, 1388, 2295, 1466, 2738]
 img = Image.open(img_path)
 draw = ImageDraw.Draw(img)

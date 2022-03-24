@@ -58,7 +58,7 @@ def htmpinone(htmps, width, height):
 
 
 
-img_path = r'part-of-AFLW\already_labeled\image00014.jpg'
+img_path = r'../part-of-AFLW/already_labeled/image00014.jpg'
 
 img = Image.open(img_path, 'r')
 print(img.size)

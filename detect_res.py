@@ -4,7 +4,6 @@ import torch
 from PIL import Image,ImageDraw, ImageFont
 from torchvision.models import resnet18
 from model_res import *
-from resnet_model import *
 import torchvision
 from torch import nn
 from dataloader2 import *

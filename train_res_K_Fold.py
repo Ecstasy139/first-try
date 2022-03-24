@@ -3,6 +3,7 @@ import os.path
 import numpy as np
 import torch
 import torchvision
+from tensorboardX import SummaryWriter
 from torch.utils.data import DataLoader
 from model_res import *
 from dataloader2 import *
@@ -22,6 +23,9 @@ def train():
     device = torch.device('cuda')
     net = ResNet().to(device)
     k = 10  # Setting the Fold
+    writer = SummaryWriter(logdir='logs_res_k-fold')
+
+
     if os.path.exists(weight_path):
         net.load_state_dict(torch.load(weight_path))
         print("Successfully load the weight")
@@ -44,7 +48,7 @@ def train():
             train_sampler = SubsetRandomSampler(train_indices)  # Call the training data
             valid_sampler = SubsetRandomSampler(val_indices)  # Call the evaluating data
 
-            train_loader = DataLoader(data, batch_size=batch_size, sampler=train_sampler)
+            train_loader = DataLoader(data, batch_size=batch_size, sampler=train_sampler, shuffle=True)
             validation_loader = DataLoader(data, batch_size=batch_size, sampler=valid_sampler)
             net.train()
             for i, (img, label) in enumerate(train_loader):
@@ -54,6 +58,7 @@ def train():
                 output = output.to(torch.float64)
                 loss = loss_fn(output, label)
                 print('Training: epoch: {}, Validate Fold: {}, Loss: {}'.format(epoch, fold, loss))
+                writer.add_scalar('train_loss', loss.item(), i)
 
                 optim.zero_grad()
                 loss.backward()
@@ -71,6 +76,7 @@ def train():
                     loss = loss_fn(output, label)
                     eval_loss = eval_loss + loss
                     print('Validating: epoch: {}, Validate Fold: {}, Loss: {}'.format(epoch, fold, eval_loss))
+                    writer.add_scalar('eval_loss', loss.item(), i)
             total_loss.append(eval_loss)
 
         total_loss = np.array(total_loss)
@@ -81,6 +87,8 @@ def train():
         if (epoch+1) % 10 == 0:
             torch.save(net.state_dict(), f'params/net_res_k_fold.pth')
             print('Save successfully')
+            
+    writer.close()
 
 
 def get_k_fold(k, fold, length):

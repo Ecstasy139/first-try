@@ -2,8 +2,8 @@ from coordinate2heatmap import *
 from dataloader_heatmap import *
 from transform import *
 
-img1_path = r'part-of-AFLW/already_labeled\image00039.jpg'
-img2_path = r'part-of-AFLW/already_labeled\image00040.jpg'
+img1_path = r'../part-of-AFLW/already_labeled/image00039.jpg'
+img2_path = r'../part-of-AFLW/already_labeled/image00040.jpg'
 
 img = Image.open(img1_path, 'r')
 ldmks1 = [546, 539, 740, 550, 633, 874, 617, 982, 633, 1226]

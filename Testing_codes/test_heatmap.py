@@ -16,8 +16,8 @@ if os.path.exists(weights):
 else:
     print('no loading')
 net.eval()
-for j in os.listdir('test_image'):
-    img = Image.open(os.path.join('test_image', j)).resize((224, 224))
+for j in os.listdir('../test_image'):
+    img = Image.open(os.path.join('../test_image', j)).resize((224, 224))
     draw = ImageDraw.Draw(img)
     img_data = transform.tf(img)
     img_data = torch.unsqueeze(img_data, dim=0)
