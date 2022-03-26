@@ -14,7 +14,7 @@ Training the model based on the ResNet, the output is the coordinates of 5 landm
 
 def train():
     # Setting hyper parameters
-    epochs = 40
+    epochs = 100
     batch_size = 10
     learning_rate = 0.001
     total_loss = 0
