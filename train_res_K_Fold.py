@@ -14,17 +14,17 @@ Training the model based on ResNet, the output is the coordinates of 5 landmarks
 * K-Fold Validation Included
 """
 
+
 def train():
     # Setting hyper parameters
     epochs = 40
     batch_size = 10
     learning_rate = 0.01
-    weight_path = 'params/net_res_k_fold.pth'
+    weight_path = 'params/net_res_k_fold1.pth'
     device = torch.device('cuda')
     net = ResNet().to(device)
     k = 10  # Setting the Fold
-    writer = SummaryWriter(logdir='logs_res_k-fold')
-
+    writer = SummaryWriter(logdir='logs_res_k_fold')
 
     if os.path.exists(weight_path):
         net.load_state_dict(torch.load(weight_path))
@@ -48,22 +48,24 @@ def train():
             train_sampler = SubsetRandomSampler(train_indices)  # Call the training data
             valid_sampler = SubsetRandomSampler(val_indices)  # Call the evaluating data
 
-            train_loader = DataLoader(data, batch_size=batch_size, sampler=train_sampler, shuffle=True)
+            train_loader = DataLoader(data, batch_size=batch_size, sampler=train_sampler)
             validation_loader = DataLoader(data, batch_size=batch_size, sampler=valid_sampler)
             net.train()
+            train_loss = 0
             for i, (img, label) in enumerate(train_loader):
                 img, label = img.to(device), label.to(device)
                 # print(img.shape, label)
                 output = net(img)
                 output = output.to(torch.float64)
                 loss = loss_fn(output, label)
-                print('Training: epoch: {}, Validate Fold: {}, Loss: {}'.format(epoch, fold, loss))
-                writer.add_scalar('train_loss', loss.item(), i)
+                print('Training: epoch: {}, Validate Fold: {}, Batch: {}, Loss: {}'.format(epoch, fold, i, loss))
+                train_loss = train_loss + loss
 
                 optim.zero_grad()
                 loss.backward()
                 optim.step()
             scheduler.step()
+            writer.add_scalar('train_loss', train_loss.item(), epoch * 10 + fold + 1)
 
             net.eval()
             eval_loss = 0
@@ -75,19 +77,25 @@ def train():
                     output = output.to(torch.float64)
                     loss = loss_fn(output, label)
                     eval_loss = eval_loss + loss
-                    print('Validating: epoch: {}, Validate Fold: {}, Loss: {}'.format(epoch, fold, eval_loss))
-                    writer.add_scalar('eval_loss', loss.item(), i)
+                    print('Validating: epoch: {}, Validate Fold: {}, Batch: {} Loss: {}'.format(epoch, fold, i, loss))
+
+                print('num: {}, eval_loss: {} '.format(epoch * 10 + 1, eval_loss))
+                writer.add_scalar('eval_loss', eval_loss.item(), epoch * 10 + fold + 1)
+
             total_loss.append(eval_loss)
 
-        total_loss = np.array(total_loss)
-        loss_of_10 = total_loss.sum() / 10
-        print(loss_of_10)
-        print('Epoch {} total loss: {}'.format(epoch, loss_of_10))
 
-        if (epoch+1) % 10 == 0:
-            torch.save(net.state_dict(), f'params/net_res_k_fold.pth')
+
+        # total_loss = np.array(total_loss)
+        # loss_of_10 = total_loss.sum() / 10
+        # print(loss_of_10)
+        # writer.add_scalar('Average Eval Loss', loss_of_10, epoch + 1)
+        # print('Epoch {} average eval loss: {}'.format(epoch, loss_of_10))
+
+        if (epoch+1) % 1 == 0:
+            torch.save(net.state_dict(), f'params/net_res_k_fold1.pth')
             print('Save successfully')
-            
+
     writer.close()
 
 
