@@ -17,9 +17,10 @@ Training the model based on ResNet, the output is the coordinates of 5 landmarks
 
 def train():
     # Setting hyper parameters
-    epochs = 40
+    epochs = 10
     batch_size = 10
     learning_rate = 0.001
+    # weight_decay = 0.0001
     weight_path = 'params/net_PFLD_k_fold.pth'
     device = torch.device('cuda')
     net = PFLDInference().to(device)
@@ -33,7 +34,7 @@ def train():
         print("There is no weight file")
 
     optim = torch.optim.Adam(params=net.parameters(), lr=learning_rate)  # Setting the Optimizer
-    scheduler = torch.optim.lr_scheduler.ExponentialLR(optim, gamma=0.9)  # Setting the Learning Rate Scheduler
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optim, mode='min', patience=10, verbose=True)  # Setting the Learning Rate Scheduler
     loss_fn = torch.nn.MSELoss().to(device)  # Setting Loss Function
 
     data = xmldataset(root='data_center2.txt')
@@ -64,7 +65,7 @@ def train():
                 optim.zero_grad()
                 loss.backward()
                 optim.step()
-            scheduler.step()
+
             writer.add_scalar('train_loss', train_loss.item(), epoch * 10 + fold + 1)
 
             net.eval()
@@ -79,9 +80,9 @@ def train():
                     eval_loss = eval_loss + loss
                     print('Validating: epoch: {}, Validate Fold: {}, Batch: {} Loss: {}'.format(epoch, fold, i, loss))
 
-                print('num: {}, eval_loss: {} '.format(epoch * 10 + 1, eval_loss))
+                print('num: {}, eval_loss: {} '.format(epoch * 10 + fold + 1, eval_loss))
                 writer.add_scalar('eval_loss', eval_loss.item(), epoch * 10 + fold + 1)
-
+            scheduler.step(eval_loss)
             total_loss.append(eval_loss)
 
 

@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import torch
-from PIL import Image,ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont
 from torchvision.models import resnet18
 from PFLD import *
 import torchvision

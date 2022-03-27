@@ -18,6 +18,7 @@ def train():
     batch_size = 10
     learning_rate = 0.001
     total_loss = 0
+    weight_decay = 0.0001
     writer = SummaryWriter('logs_PLFD')
     weight_path = 'params/net_PFLD.pth'
     device = torch.device('cuda')
@@ -28,14 +29,13 @@ def train():
     else:
         print("There is no weight file")
 
-    optim = torch.optim.Adam(params=net.parameters(), lr=learning_rate)
+    optim = torch.optim.Adam(params=net.parameters(), lr=learning_rate, weight_decay=weight_decay)
     loss_fn = torch.nn.MSELoss().to(device)
-
 
     data = xmldataset(root='data_center2.txt')
     dataloader = DataLoader(data, batch_size=batch_size, shuffle=True)
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optim, [30, 80])
-
+    # scheduler = torch.optim.lr_scheduler.MultiStepLR(optim, [30, 80])
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optim, mode='min', patience=10, verbose=True)
 
     for epoch in range(epochs):
         net.train()
@@ -53,7 +53,7 @@ def train():
             optim.zero_grad()
             loss.backward()
             optim.step()
-        scheduler.step()
+        scheduler.step(total_loss)
 
         writer.add_scalar('train_loss', total_loss.item(), epoch)
 

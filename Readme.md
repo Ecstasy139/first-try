@@ -60,16 +60,16 @@ The address of the images and the labels are stored in this file.
 The organization of the codes and dataset.
 ```
     first_try
-    -params
-    -part-of-AFLW
-        --already_labeled
-            ---***.jpg
-            ---***.jpg
-            ---...
-    -***.py
-    -data_center2.txt
-    -test_image
-        --xxx.jpg
+    |-params
+    |-part-of-AFLW
+    |    --already_labeled
+    |        ---***.jpg
+    |        ---***.jpg
+    |        ---...
+    |-***.py
+    |-data_center2.txt
+    |-test_image
+    |    --xxx.jpg
 ```
 There are all 4 models in the project. Each have its own training file, model file and detection file.
 1. Training the model: Run the train_xxx.py
