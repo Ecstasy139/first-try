@@ -90,7 +90,7 @@ def showresults(img1, img2):
 
 path='test_image'
 model = PFLDInference()  # Load Resnet model
-model.load_state_dict(torch.load('params/net_PFLD_k_fold.pth'))
+model.load_state_dict(torch.load('params/net_PFLD_k_fold_adab.pth'))
 data = xmldataset(root='data_center2.txt')
 tot = torchvision.transforms.ToTensor()
 compose = torchvision.transforms.Compose([
@@ -103,14 +103,14 @@ model.eval()
 for l in os.listdir(path):
     img_detect = Image.open(os.path.join(path, l))
     img_real = Image.open(os.path.join(path, l))
-    real_ldmks = findlabels(l) # get ground truth landmarks
+    real_ldmks = findlabels(l)  # get ground truth landmarks
     w, h = img_real.size
     img_data = compose(img_detect)
     draw_detect = ImageDraw.Draw(img_detect)
     draw_real = ImageDraw.Draw(img_real)
     img1 = tot(img_data)
     img1 = torch.unsqueeze(img1, dim=0)
-    out_ = model(img1) # get prediction
+    out_ = model(img1)  # get prediction
     print(out_)
     out_ = out_[0].tolist()
     print(out_)

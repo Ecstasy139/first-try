@@ -7,7 +7,7 @@ from tensorboardX import SummaryWriter
 from torch.utils.data import DataLoader
 from PFLD import *
 from dataloader_PFLD import *
-
+from adabelief_pytorch import AdaBelief
 
 """
 Training the model based on ResNet, the output is the coordinates of 5 landmarks
@@ -33,7 +33,7 @@ def train():
     else:
         print("There is no weight file")
 
-    optim = torch.optim.Adam(params=net.parameters(), lr=learning_rate)  # Setting the Optimizer
+    optim = AdaBelief(net.parameters(), lr=learning_rate, eps=1e-16, betas=(0.9, 0.999), weight_decouple=False, rectify=True)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optim, mode='min', patience=10, verbose=True)  # Setting the Learning Rate Scheduler
     loss_fn = torch.nn.MSELoss().to(device)  # Setting Loss Function
 

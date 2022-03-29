@@ -1,11 +1,12 @@
 import os.path
-
+from PFLD_Loss import *
 import torch
 import torchvision
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from PFLD import *
 from dataloader_PFLD import *
+from adabelief_pytorch import AdaBelief
 
 """
 Training the model based on the ResNet, the output is the coordinates of 5 landmarks
@@ -18,7 +19,7 @@ def train():
     batch_size = 10
     learning_rate = 0.001
     total_loss = 0
-    weight_decay = 0.0001
+    # weight_decay = 0.000001
     writer = SummaryWriter('logs_PLFD')
     weight_path = 'params/net_PFLD.pth'
     device = torch.device('cuda')
@@ -29,7 +30,7 @@ def train():
     else:
         print("There is no weight file")
 
-    optim = torch.optim.Adam(params=net.parameters(), lr=learning_rate, weight_decay=weight_decay)
+    optim = AdaBelief(net.parameters(), lr=learning_rate, eps=1e-16, betas=(0.9, 0.999), weight_decouple=False, rectify=True)
     loss_fn = torch.nn.MSELoss().to(device)
 
     data = xmldataset(root='data_center2.txt')
