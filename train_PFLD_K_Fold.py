@@ -3,7 +3,7 @@ import os.path
 import numpy as np
 import torch
 import torchvision
-from tensorboardX import SummaryWriter
+from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader
 from PFLD import *
 from dataloader_PFLD import *
@@ -25,7 +25,7 @@ def train():
     device = torch.device('cuda')
     net = PFLDInference().to(device)
     k = 10  # Setting the Fold
-    writer = SummaryWriter(logdir='logs_PFLD_k_fold')
+    writer = SummaryWriter('logs_PFLD_k_fold')
 
     if os.path.exists(weight_path):
         net.load_state_dict(torch.load(weight_path))
