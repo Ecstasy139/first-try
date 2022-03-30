@@ -90,7 +90,7 @@ def showresults(img1, img2):
 
 path='test_image'
 model = PFLDInference()  # Load Resnet model
-model.load_state_dict(torch.load('params/net_PFLD_k_fold_adab.pth'))
+model.load_state_dict(torch.load('params/net_PFLD_k_fold_recti.pth'))
 data = xmldataset(root='data_center2.txt')
 tot = torchvision.transforms.ToTensor()
 compose = torchvision.transforms.Compose([
