@@ -17,8 +17,8 @@ Training the model based on ResNet, the output is the coordinates of 5 landmarks
 
 def train():
     # Setting hyper parameters
-    epochs = 10
-    batch_size = 16
+    epochs = 20
+    batch_size = 20
     learning_rate = 0.001
     # weight_decay = 0.0001
     weight_path = 'params/net_PFLD_k_fold.pth'
