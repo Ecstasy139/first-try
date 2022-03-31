@@ -19,8 +19,8 @@ def train():
     # Setting hyper parameters
     epochs = 20
     batch_size = 20
-    learning_rate = 0.001
-    weight_decay = 1e-2
+    learning_rate = 0.001     #0.001
+    weight_decay = 1e-3          # 1e-2
     weight_path = 'params/net_PFLD_k_fold.pth'
     device = torch.device('cuda')
     net = PFLDInference().to(device)
