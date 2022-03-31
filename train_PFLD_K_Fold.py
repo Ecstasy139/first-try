@@ -20,7 +20,7 @@ def train():
     epochs = 20
     batch_size = 20
     learning_rate = 0.001
-    # weight_decay = 0.0001
+    weight_decay = 1e-2
     weight_path = 'params/net_PFLD_k_fold.pth'
     device = torch.device('cuda')
     net = PFLDInference().to(device)
@@ -33,7 +33,7 @@ def train():
     else:
         print("There is no weight file")
 
-    optim = AdaBelief(net.parameters(), lr=learning_rate, eps=1e-16, weight_decay=1e-2, betas=(0.9, 0.999), weight_decouple=True, rectify=False, )
+    optim = AdaBelief(net.parameters(), lr=learning_rate, eps=1e-16, weight_decay=weight_decay, betas=(0.9, 0.999), weight_decouple=True, rectify=False)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optim, mode='min', patience=10, verbose=True)  # Setting the Learning Rate Scheduler
     loss_fn = torch.nn.MSELoss().to(device)  # Setting Loss Function
 
