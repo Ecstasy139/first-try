@@ -19,11 +19,12 @@ def train():
     # Setting hyper parameters
     epochs = 20
     batch_size = 20
-    learning_rate = 0.001     #0.001
-    weight_decay = 1e-3          # 1e-2
-    weight_path = 'params/net_PFLD_k_fold.pth'
+    learning_rate = 0.001     #0.001   adabelief
+    weight_decay = 0.01          # 1e-2   adabelief
+    weight_path = 'params/net_PFLD_k_fold_ini.pth'
     device = torch.device('cuda')
     net = PFLDInference().to(device)
+
     k = 10  # Setting the Fold
     writer = SummaryWriter('logs_PFLD_k_fold')
 
@@ -67,7 +68,7 @@ def train():
                 optim.step()
 
             writer.add_scalar('train_loss', train_loss.item(), epoch * 10 + fold + 1)
-
+            print(lr)
             net.eval()
             eval_loss = 0
             with torch.no_grad():
@@ -94,7 +95,7 @@ def train():
         # print('Epoch {} average eval loss: {}'.format(epoch, loss_of_10))
 
         if (epoch+1) % 1 == 0:
-            torch.save(net.state_dict(), f'params/net_PFLD_k_fold.pth')
+            torch.save(net.state_dict(), f'params/net_PFLD_k_fold_ini.pth')
             print('Save successfully')
 
     writer.close()
