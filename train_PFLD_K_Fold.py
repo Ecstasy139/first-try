@@ -68,7 +68,7 @@ def train():
                 optim.step()
 
             writer.add_scalar('train_loss', train_loss.item(), epoch * 10 + fold + 1)
-            print(lr)
+
             net.eval()
             eval_loss = 0
             with torch.no_grad():
