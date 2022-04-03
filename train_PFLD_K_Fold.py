@@ -21,7 +21,7 @@ def train():
     batch_size = 20
     learning_rate = 0.001     #0.001   adabelief
     weight_decay = 0.01          # 1e-2   adabelief
-    weight_path = 'params/net_PFLD_k_fold_ini.pth'
+    weight_path = 'params/net_PFLD_k_fold.pth'
     device = torch.device('cuda')
     net = PFLDInference().to(device)
 
@@ -35,7 +35,8 @@ def train():
         print("There is no weight file")
 
     optim = AdaBelief(net.parameters(), lr=learning_rate, eps=1e-16, weight_decay=weight_decay, betas=(0.9, 0.999), weight_decouple=True, rectify=False)
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optim, mode='min', patience=10, verbose=True)  # Setting the Learning Rate Scheduler
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optim, milestones=[80, 160], gamma=0.1)
+    # scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optim, mode='min', patience=10, verbose=True, min_lr=1e-6, eps=1e-16)  # Setting the Learning Rate Scheduler
     loss_fn = torch.nn.MSELoss().to(device)  # Setting Loss Function
 
     data = xmldataset(root='data_center2.txt')
@@ -83,7 +84,7 @@ def train():
 
                 print('num: {}, eval_loss: {} '.format(epoch * 10 + fold + 1, eval_loss))
                 writer.add_scalar('eval_loss', eval_loss.item(), epoch * 10 + fold + 1)
-            scheduler.step(eval_loss)
+            scheduler.step()
             total_loss.append(eval_loss)
 
 
@@ -95,7 +96,7 @@ def train():
         # print('Epoch {} average eval loss: {}'.format(epoch, loss_of_10))
 
         if (epoch+1) % 1 == 0:
-            torch.save(net.state_dict(), f'params/net_PFLD_k_fold_ini.pth')
+            torch.save(net.state_dict(), f'params/net_PFLD_k_fold.pth')
             print('Save successfully')
 
     writer.close()
