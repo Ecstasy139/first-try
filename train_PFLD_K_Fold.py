@@ -15,16 +15,38 @@ Training the model based on ResNet, the output is the coordinates of 5 landmarks
 """
 
 
+def set_lr(epoch, lr):
+    if epoch in range(0, 4):
+        lr_ = lr
+
+    elif epoch in range(4, 8):
+        lr_ = 0.001
+
+    elif epoch in range(8, 12):
+        lr_ = 0.0005
+
+    elif epoch in range(12, 14):
+        lr_ = 0.00025
+
+    elif epoch in range(14, 16):
+        lr_ = 0.000125
+
+    else:
+        lr_ = 0.00001
+
+    return lr_
+
+
 def train():
     # Setting hyper parameters
-    epochs = 20
+    epochs = 18
     batch_size = 20
-    learning_rate = 0.001     #0.001   adabelief
-    weight_decay = 0.01          # 1e-2   adabelief
+    learning_rate = 2e-3
+    lr = learning_rate
+    weight_decay = 1e-2
     weight_path = 'params/net_PFLD_k_fold.pth'
     device = torch.device('cuda')
     net = PFLDInference().to(device)
-
     k = 10  # Setting the Fold
     writer = SummaryWriter('logs_PFLD_k_fold')
 
@@ -33,10 +55,10 @@ def train():
         print("Successfully load the weight")
     else:
         print("There is no weight file")
-
     optim = AdaBelief(net.parameters(), lr=learning_rate, eps=1e-16, weight_decay=weight_decay, betas=(0.9, 0.999), weight_decouple=True, rectify=False)
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optim, milestones=[80, 160], gamma=0.1)
-    # scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optim, mode='min', patience=10, verbose=True, min_lr=1e-6, eps=1e-16)  # Setting the Learning Rate Scheduler
+    # scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optim, mode='min', patience=10, verbose=True, min_lr=1e-6, eps=1e-16)
+    # scheduler = torch.optim.lr_scheduler.StepLR(optim, step_size=40, gamma=0.5)
+    # scheduler = torch.optim.lr_scheduler.MultiStepLR(optim, milestones=[80, 160], gamma=0.1)
     loss_fn = torch.nn.MSELoss().to(device)  # Setting Loss Function
 
     data = xmldataset(root='data_center2.txt')
@@ -44,6 +66,8 @@ def train():
 
     for epoch in range(epochs):
         total_loss = []
+        lr_ = set_lr(epoch, lr)
+        optim.param_groups[0]["lr"] = lr_
         for fold in range(k):  # Control the K Fold Loop
 
             train_indices, val_indices = get_k_fold(k, fold, length)
@@ -55,18 +79,20 @@ def train():
             validation_loader = DataLoader(data, batch_size=batch_size, sampler=valid_sampler)
             net.train()
             train_loss = 0
+
             for i, (img, label) in enumerate(train_loader):
                 img, label = img.to(device), label.to(device)
                 # print(img.shape, label)
                 output = net(img)
                 output = output.to(torch.float64)
                 loss = loss_fn(output, label)
-                print('Training: epoch: {}, Validate Fold: {}, Batch: {}, Loss: {}'.format(epoch, fold, i, loss))
+                print('Training: epoch: {}, Validate Fold: {}, Batch: {}, Loss: {}, Learning rate:{}'.format(epoch, fold, i, loss, optim.param_groups[0]["lr"]))
                 train_loss = train_loss + loss
 
                 optim.zero_grad()
                 loss.backward()
                 optim.step()
+
 
             writer.add_scalar('train_loss', train_loss.item(), epoch * 10 + fold + 1)
 
@@ -84,7 +110,7 @@ def train():
 
                 print('num: {}, eval_loss: {} '.format(epoch * 10 + fold + 1, eval_loss))
                 writer.add_scalar('eval_loss', eval_loss.item(), epoch * 10 + fold + 1)
-            scheduler.step()
+            # scheduler.step()
             total_loss.append(eval_loss)
 
 
