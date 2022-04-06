@@ -15,6 +15,27 @@ Training the model based on ResNet, the output is the coordinates of 5 landmarks
 """
 
 
+# def set_lr(epoch, lr):
+#     if epoch in range(0, 4):
+#         lr_ = lr
+#
+#     elif epoch in range(4, 8):
+#         lr_ = 0.001
+#
+#     elif epoch in range(8, 12):
+#         lr_ = 0.0005
+#
+#     elif epoch in range(12, 14):
+#         lr_ = 0.00025  # 0.0002
+#
+#     elif epoch in range(14, 16):
+#         lr_ = 0.000125   # 0.0001
+#
+#     else:
+#         lr_ = 0.00001
+#
+#     return lr_
+
 def set_lr(epoch, lr):
     if epoch in range(0, 4):
         lr_ = lr
@@ -25,21 +46,26 @@ def set_lr(epoch, lr):
     elif epoch in range(8, 12):
         lr_ = 0.0005
 
-    elif epoch in range(12, 14):
+    elif epoch in range(12, 16):
         lr_ = 0.00025
 
-    elif epoch in range(14, 16):
+    elif epoch in range(16, 20):
         lr_ = 0.000125
 
-    else:
+    elif epoch in range(20, 24):
         lr_ = 0.00001
+
+    elif epoch in range(24, 27):
+        lr_ = 0.000001
+
+    else:
+        lr_ = 0.0000001
 
     return lr_
 
-
 def train():
     # Setting hyper parameters
-    epochs = 18
+    epochs = 40
     batch_size = 20
     learning_rate = 2e-3
     lr = learning_rate

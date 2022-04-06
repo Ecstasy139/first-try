@@ -5,7 +5,7 @@ import math
 from torch.nn import init
 
 
-def weight_init(ms):
+def xavier_weight_init(ms):
     for m in ms.modules():
         classname = m.__class__.__name__
         if classname.find('Conv') != -1:
@@ -15,6 +15,18 @@ def weight_init(ms):
             init.constant_(m.bias, 0)
         elif classname.find('Linear') != -1:
             m.weight.data = init.xavier_normal_(m.weight.data)
+
+
+def he_weight_init(ms):
+    for m in ms.modules():
+        classname = m.__class__.__name__
+        if classname.find('Conv') != -1:
+            m.weight.data = init.kaiming_normal_(m.weight.data)
+        elif classname.find('BatchNorm') != -1:
+            init.constant_(m.weight, 1)
+            init.constant_(m.bias, 0)
+        elif classname.find('Linear') != -1:
+            m.weight.data = init.kaiming_normal_(m.weight.data)
 
 
 
@@ -104,7 +116,7 @@ class PFLDInference(nn.Module):
         self.avg_pool2 = nn.AvgPool2d(7)
         self.fc = nn.Linear(176, 10)
 
-        weight_init(self)
+        xavier_weight_init(self)
 
     def forward(self, x):  # x: 3, 112, 112
         x = self.relu(self.bn1(self.conv1(x)))  # [64, 56, 56]
